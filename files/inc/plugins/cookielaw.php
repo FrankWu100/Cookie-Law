@@ -292,11 +292,17 @@ function cookielaw_misc()
 	$lang->load('cookielaw');
 	
 	if($mybb->input['action'] == 'cookielaw_change')
-	{
+	{	
+		// hack to show no redirect
+		$redirect_hack = 1;
+		$redirect_setting = $mybb->settings['redirects'];
+
+		if ($redirect_setting != $redirect_hack) { 
+			$mybb->settings['redirects'] = $redirect_hack; 
+		}
+
 		if(isset($mybb->input['more_info']))
 		{
-			// hack to show no redirect
-			$mybb->settings['redirects'] = 0;
 			redirect('misc.php?action=cookielaw_info');
 		}
 		else
@@ -309,7 +315,6 @@ function cookielaw_misc()
 			else
 			{
 				my_setcookie('mybb[allow_cookies]', '1');
-
 				if($mybb->input['okay'])
 				{
 					$lang->cookielaw_redirect = '';
@@ -317,6 +322,7 @@ function cookielaw_misc()
 			}
 			redirect('index.php', $lang->cookielaw_redirect);
 		}
+		$mybb->settings['redirects'] = $redirect_setting;
 	}
 	elseif($mybb->input['action'] == 'cookielaw_info')
 	{
@@ -413,7 +419,7 @@ function cookielaw_clear_cookies()
 			{
 				my_unsetcookie($key);
 			}
-		}
+		}		
 		unset($mybb->user);
 		unset($mybb->session);
 		$session->load_guest();
